@@ -20,15 +20,12 @@ sub init()
         "X": "x",
         "O": "o"
     }
-    m.currentFocus = [0, 0]
-    m.isPlayerMove = true
-    m.currentShape = m.shapeMap["X"]
-    m.gameMap = [chr(32),chr(32),chr(32),chr(32),chr(32),chr(32),chr(32),chr(32),chr(32)]
     m.width = 1920
     m.height = 1080
-    m.isGameOver = false
+    resetVars()
+
     drawGrid()
-    setFocusPointer()
+
 end sub
 
 function onKeyEvent(key as string, press as boolean) as boolean
@@ -47,6 +44,19 @@ function onKeyEvent(key as string, press as boolean) as boolean
     end if
     return false
 end function
+
+sub onDialogBtnPressed(msg as object)
+    buttonSelected = msg.getData()
+    if (buttonSelected = 0)
+        resetVars()
+        m.top.removeChild(m.dialog)
+        m.dialog.unObserveField("buttonSelected")
+        m.delete("dialog")
+        m.top.setFocus(true)
+    else
+        m.top.exitApp = true
+    end if
+end sub
 
 sub drawGrid()
     gridLines = [
@@ -165,9 +175,9 @@ sub checkMap()
         line = m.winLines[i]
         if (m.gameMap[line[0]] = m.currentShape and m.gameMap[line[0]] = m.gameMap[line[1]] and m.gameMap[line[2]] = m.gameMap[line[1]])
             if (m.isPlayerMove = true)
-                ? "WIN!!"
+                showPopup("You're win. Do you want play again?")
             else
-                ? "Lost!!!"
+                showPopup("You're lost. Do you want play again?")
             end if
             m.isGameOver = true
             exit for
@@ -176,7 +186,7 @@ sub checkMap()
     end for
     if (m.gameMap.join("").instr(0 ," ") = 0)
         m.isGameOver = true
-        ? "Draw!!!"
+        showPopup("Draw. Do you want play again?")
     end if
 end sub
 
@@ -253,4 +263,27 @@ sub makeAIMove(lineIdx as integer)
             exit for
         end if
     end for
+end sub
+
+sub showPopup(message as string)
+    m.dialog = m.top.createChild("Dialog")
+    m.dialog.setFields({
+        "title": message,
+        "buttons": [
+            "Yes",
+            "No"
+        ]
+    })
+    m.dialog.observeField("buttonSelected", "onDialogBtnPressed")
+    m.dialog.setFocus(true)
+end sub
+
+sub resetVars()
+    m.currentFocus = [0, 0]
+    m.isPlayerMove = true
+    m.currentShape = m.shapeMap["X"]
+    m.gameMap = [chr(32),chr(32),chr(32),chr(32),chr(32),chr(32),chr(32),chr(32),chr(32)]
+    m.isGameOver = false
+    m.shapes.removeChildrenIndex(m.shapes.getChildCount(), 0)
+    setFocusPointer()
 end sub
