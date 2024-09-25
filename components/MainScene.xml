@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--	Main(root) scene of the application 	-->
+<component name="MainScene" extends="Scene">
+
+    <interface>
+
+<field id="exitApp" type="boolean"/>
+    </interface>
+
+    <script type="text/brightscript" uri="./MainScene.brs" />
+
+
+    <children>
+    </children>
+
+</component>
