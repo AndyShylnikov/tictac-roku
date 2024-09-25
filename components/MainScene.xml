@@ -20,6 +20,15 @@
             uri="pkg:/resources/focus.png"
             visible="false"
         />
+        <Animation id="focusAnimation"
+                   duration="0.1"
+                   easeFunction="quad"
+        >
+            <Vector2DFieldInterpolator
+                    id="focusInterp"
+                    key="[0, 1]"
+                    fieldToInterp="currentFocusPointer.translation"/>
+        </Animation>
     </children>
 
 </component>

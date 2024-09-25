@@ -1,7 +1,10 @@
 sub init()
+    m.top.setFocus(true)
     m.grid = m.top.findNode("grid")
     m.shapes = m.top.findNode("shapes")
     m.currentFocusPointer = m.top.findNode("currentFocusPointer")
+    m.focusAnimation = m.top.findNode("focusAnimation")
+    m.focusInterp = m.top.findNode("focusInterp")
     m.cellSize = 300
     m.winLines = [
         [0, 1, 2],
@@ -28,7 +31,18 @@ sub init()
 end sub
 
 function onKeyEvent(key as string, press as boolean) as boolean
-
+    if (press = true)
+        if (key = "left")
+            return moveFocus(-1, 0)
+        else if (key ="right")
+            return moveFocus(1, 0)
+        else if (key ="up")
+            return moveFocus(0,-1)
+        else if (key ="down")
+            return moveFocus(0,1)
+        end if
+    end if
+    return false
 end function
 
 sub drawGrid()
@@ -85,3 +99,23 @@ sub setFocusPointer()
         "visible": true
     })
 end sub
+
+function moveFocus(dX, dY)
+    currentFocusCoords = m.currentFocusPointer.translation
+    targetCoords = [currentFocusCoords[0], currentFocusCoords[1]]
+    toMove = false
+    if (dX <> 0 and m.currentFocus[0] + dX >= 0 and m.currentFocus[0] + dX <= 2)
+        targetCoords[0] = currentFocusCoords[0] + m.cellSize * dX
+        m.currentFocus[0] = m.currentFocus[0] + dX
+        toMove = true
+    else if (dY <> 0 and m.currentFocus[1] + dY >= 0 and m.currentFocus[1] + dY <= 2)
+        targetCoords[1] = currentFocusCoords[1] + m.cellSize * dY
+        m.currentFocus[1] = m.currentFocus[1] + dY
+        toMove = true
+    end if
+    if (toMove = true)
+        m.focusInterp.keyValue = [currentFocusCoords, targetCoords]
+        m.focusAnimation.control = "start"
+    end if
+    return true
+end function
