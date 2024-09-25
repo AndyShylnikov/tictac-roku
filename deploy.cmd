@@ -11,7 +11,7 @@ echo Deploying the project to the device...
 set package_name=deply.zip
 set manifest_file=manifest
 
-set target_directory=.\roku-framework\app
+set target_directory=.\
 set zipper=7z
 set transfer_tool=curl
 %transfer_tool% -X POST http://%device_ip%:8060/keypress/HOME
