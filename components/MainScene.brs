@@ -184,9 +184,9 @@ sub checkMap()
         end if
 
     end for
-    if (m.gameMap.join("").instr(0 ," ") = 0)
+    if (m.gameMap.join("").instr(0 ," ") = -1)
         m.isGameOver = true
-        showPopup("Draw. Do you want play again?")
+        showPopup("Draw!!!. Do you want play again?")
     end if
 end sub
 
