@@ -12,6 +12,9 @@
 
 
     <children>
+        <Group
+            id="grid"/>
+        <Group id="shapes"/>
     </children>
 
 </component>
