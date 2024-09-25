@@ -125,9 +125,9 @@ end function
 
 sub setShape()
     position = m.currentFocus[1] * 3 + m.currentFocus[0]
-
     if (m.gameMap[position] = "")
         placeShape(position)
+        checkMap()
     end if
 end sub
 
@@ -153,4 +153,13 @@ sub placeShape(position)
             "uri": posterUri
         })
     end if
+end sub
+
+sub checkMap()
+    for i = 0 to m.winLines.count() - 1
+        line = m.winLines[i]
+        if (m.gameMap[line[0]] = m.currentShape and m.gameMap[line[0]] = m.gameMap[line[1]] and m.gameMap[line[2]] = m.gameMap[line[1]])
+            ? "WIN!!"
+        end if
+    end for
 end sub
