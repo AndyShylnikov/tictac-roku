@@ -1,7 +1,7 @@
 sub init()
     m.grid = m.top.findNode("grid")
     m.shapes = m.top.findNode("shapes")
-
+    m.currentFocusPointer = m.top.findNode("currentFocusPointer")
     m.cellSize = 300
     m.winLines = [
         [0, 1, 2],
@@ -21,9 +21,10 @@ sub init()
     m.isPlayerMove = true
     m.currentShape = m.shapes["X"]
     
-    m.width= 1920
+    m.width = 1920
     m.height = 1080
     drawGrid()
+    setFocusPointer()
 end sub
 
 function onKeyEvent(key as string, press as boolean) as boolean
@@ -71,4 +72,16 @@ sub drawGrid()
             "color": "#000000"
         })
     end for
+end sub
+
+sub setFocusPointer()
+    m.currentFocusPointer.setFields({
+        "translation": [
+            (m.width / 2 - m.cellSize * 1.5) + m.currentFocus[0] * m.cellSize + 10,
+            (m.height / 2 - m.cellSize * 1.5) + m.currentFocus[1] * m.cellSize + 10
+        ],
+        "width": m.cellSize - 20
+        "height": m.cellSize - 20
+        "visible": true
+    })
 end sub

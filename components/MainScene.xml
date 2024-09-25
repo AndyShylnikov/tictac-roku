@@ -15,6 +15,11 @@
         <Group
             id="grid"/>
         <Group id="shapes"/>
+        <Poster
+            id="currentFocusPointer"
+            uri="pkg:/resources/focus.png"
+            visible="false"
+        />
     </children>
 
 </component>
