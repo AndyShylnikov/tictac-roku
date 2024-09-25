@@ -16,16 +16,17 @@ sub init()
         [0, 4, 8],
         [2, 4, 6],
     ]
-    m.shapes = {
+    m.shapeMap = {
         "X": "x",
         "O": "o"
     }
     m.currentFocus = [0, 0]
     m.isPlayerMove = true
-    m.currentShape = m.shapes["X"]
-    
+    m.currentShape = m.shapeMap["X"]
+    m.gameMap = ["","","","","","","","",""]
     m.width = 1920
     m.height = 1080
+    m.isGameOver = false
     drawGrid()
     setFocusPointer()
 end sub
@@ -40,6 +41,8 @@ function onKeyEvent(key as string, press as boolean) as boolean
             return moveFocus(0,-1)
         else if (key ="down")
             return moveFocus(0,1)
+        else if (key = "OK")
+            setShape()
         end if
     end if
     return false
@@ -119,3 +122,35 @@ function moveFocus(dX, dY)
     end if
     return true
 end function
+
+sub setShape()
+    position = m.currentFocus[1] * 3 + m.currentFocus[0]
+
+    if (m.gameMap[position] = "")
+        placeShape(position)
+    end if
+end sub
+
+sub placeShape(position)
+    if (m.isGameOver = false)
+        m.gameMap[position] = m.currentShape
+        cellX = position mod 3
+        cellY = position \ 3
+        shapePoster = m.shapes.createChild("Poster")
+
+        if (m.currentShape = m.shapeMap["X"])
+            posterUri = "pkg://resources/cross.png"
+        else
+            posterUri = "pkg://resources/nought.png"
+        end if
+        shapePoster.setFields({
+            "translation": [
+                (m.width / 2 - m.cellSize * 1.5) + cellX * m.cellSize + 100 ,
+                (m.height / 2 - m.cellSize * 1.5) + cellY * m.cellSize + 100
+            ],
+            "width": 100
+            "height": 100,
+            "uri": posterUri
+        })
+    end if
+end sub
