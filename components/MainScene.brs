@@ -23,7 +23,7 @@ sub init()
     m.currentFocus = [0, 0]
     m.isPlayerMove = true
     m.currentShape = m.shapeMap["X"]
-    m.gameMap = ["","","","","","","","",""]
+    m.gameMap = [chr(32),chr(32),chr(32),chr(32),chr(32),chr(32),chr(32),chr(32),chr(32)]
     m.width = 1920
     m.height = 1080
     m.isGameOver = false
@@ -126,7 +126,7 @@ end function
 sub setShape()
     if (m.isPlayerMove = true)
         position = m.currentFocus[1] * 3 + m.currentFocus[0]
-        if (m.gameMap[position] = "")
+        if (m.gameMap[position] = chr(32))
             placeShape(position)
         end if
     end if
@@ -164,11 +164,20 @@ sub checkMap()
     for i = 0 to m.winLines.count() - 1
         line = m.winLines[i]
         if (m.gameMap[line[0]] = m.currentShape and m.gameMap[line[0]] = m.gameMap[line[1]] and m.gameMap[line[2]] = m.gameMap[line[1]])
-            ? "WIN!!"
+            if (m.isPlayerMove = true)
+                ? "WIN!!"
+            else
+                ? "Lost!!!"
+            end if
             m.isGameOver = true
             exit for
         end if
+
     end for
+    if (m.gameMap.join("").instr(0 ," ") = 0)
+        m.isGameOver = true
+        ? "Draw!!!"
+    end if
 end sub
 
 sub switchSides()
@@ -201,7 +210,7 @@ sub defineAIMove()
         enemyShapesCount = 0
 
         for j = 0 to tempArray.count() - 1
-            if (tempArray[j] = "")
+            if (tempArray[j] = chr(32))
                 emptyFieldsCount++
             else if (tempArray[j] = m.currentShape)
                 currentShapesCount++
@@ -239,7 +248,7 @@ end sub
 
 sub makeAIMove(lineIdx as integer)
     for i = 0 to m.winLines[lineIdx].count() - 1
-        if (m.gameMap[m.winLines[lineIdx][i]] = "")
+        if (m.gameMap[m.winLines[lineIdx][i]] = chr(32))
             placeShape(m.winLines[lineIdx][i])
             exit for
         end if
