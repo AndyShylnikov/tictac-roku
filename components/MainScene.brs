@@ -124,10 +124,11 @@ function moveFocus(dX, dY)
 end function
 
 sub setShape()
-    position = m.currentFocus[1] * 3 + m.currentFocus[0]
-    if (m.gameMap[position] = "")
-        placeShape(position)
-        checkMap()
+    if (m.isPlayerMove = true)
+        position = m.currentFocus[1] * 3 + m.currentFocus[0]
+        if (m.gameMap[position] = "")
+            placeShape(position)
+        end if
     end if
 end sub
 
@@ -152,6 +153,10 @@ sub placeShape(position)
             "height": 100,
             "uri": posterUri
         })
+        checkMap()
+        if (m.isGameOver = false)
+            switchSides()
+        end if
     end if
 end sub
 
@@ -160,6 +165,83 @@ sub checkMap()
         line = m.winLines[i]
         if (m.gameMap[line[0]] = m.currentShape and m.gameMap[line[0]] = m.gameMap[line[1]] and m.gameMap[line[2]] = m.gameMap[line[1]])
             ? "WIN!!"
+            m.isGameOver = true
+            exit for
+        end if
+    end for
+end sub
+
+sub switchSides()
+    m.isPlayerMove = not m.isPlayerMove
+
+    if (m.currentShape = m.shapeMap["X"])
+        m.currentShape = m.shapeMap["O"]
+    else
+        m.currentShape = m.shapeMap["X"]
+    end if
+
+    if (m.isPlayerMove = false)
+        defineAIMove()
+    end if
+end sub
+
+sub defineAIMove()
+    if (m.isPlayerMove = true) then stop
+    bestMoveIdx = -1
+    winningMoveIdx = -1
+    preventPlayerWinningIdx = -1
+    emptyLineIdx = -1
+    singleAIShapeIdx = -1
+    for i = 0 to m.winLines.count() - 1
+        line = m.winLines[i]
+        tempArray = [m.gameMap[line[0]], m.gameMap[line[1]],m.gameMap[line[2]]]
+
+        currentShapesCount = 0
+        emptyFieldsCount = 0
+        enemyShapesCount = 0
+
+        for j = 0 to tempArray.count() - 1
+            if (tempArray[j] = "")
+                emptyFieldsCount++
+            else if (tempArray[j] = m.currentShape)
+                currentShapesCount++
+            else
+                enemyShapesCount++
+            end if
+        end for
+
+        if (currentShapesCount = 2 and emptyFieldsCount = 1  and rnd(0) > 0.5)
+            winningMoveIdx = i
+        else if (enemyShapesCount = 2 and emptyFieldsCount = 1)
+            preventPlayerWinningIdx = i
+        else if (currentShapesCount = 1 and emptyFieldsCount = 2)
+            singleAIShapeIdx = i
+        else if (emptyFieldsCount = 3)
+            emptyLineIdx = i
+        else if (emptyFieldsCount > 0 and emptyLineIdx = -1)
+            bestMoveIdx = i
+        end if
+    end for
+
+    if (winningMoveIdx > -1)
+        makeAIMove(winningMoveIdx)
+    else if (preventPlayerWinningIdx > -1)
+        makeAIMove(preventPlayerWinningIdx)
+    else if (singleAIShapeIdx > -1)
+        makeAIMove(singleAIShapeIdx)
+    else if (emptyLineIdx > -1)
+        makeAIMove(emptyLineIdx)
+    else if (bestMoveIdx > -1)
+        makeAIMove(bestMoveIdx)
+    end if
+
+end sub
+
+sub makeAIMove(lineIdx as integer)
+    for i = 0 to m.winLines[lineIdx].count() - 1
+        if (m.gameMap[m.winLines[lineIdx][i]] = "")
+            placeShape(m.winLines[lineIdx][i])
+            exit for
         end if
     end for
 end sub
